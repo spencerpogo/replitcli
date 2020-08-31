@@ -1,5 +1,5 @@
 {
-  "name": "replitcli",
+  "name": "replit-cli",
   "version": "0.1.0",
   "description": "A command line interface for repl.it",
   "repository": {
@@ -13,6 +13,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "dependencies": {
     "@replit/crosis": "^5.1.1",
     "@replit/protocol": "^0.2.9",
