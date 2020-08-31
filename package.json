@@ -1,10 +1,10 @@
 {
-  "name": "@scoder12/replitcli",
+  "name": "replit",
   "version": "0.1.2",
   "description": "A command line interface for repl.it",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/Scoder12/replitcli"
+    "type": "git",
+    "url": "https://github.com/Scoder12/replitcli"
   },
   "main": "index.js",
   "scripts": {
