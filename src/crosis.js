@@ -2,9 +2,11 @@ const crosis = require("@replit/crosis");
 const axios = require("axios");
 global.WebSocket = require("ws");
 
+const config = require("./config");
+
 /* Listens for event evt on ch
 Promise is resolved when an event is received
-falsey timeout is the same as no timeout
+falsey or <=0 timeout is the same as no timeout
 If timeout expires without an event being received, listener is removed and promise is rejected
 */
 const waitForEventTimeout = (ch, evt, timeout) => {
@@ -15,7 +17,7 @@ const waitForEventTimeout = (ch, evt, timeout) => {
     };
 
     let timeoutId;
-    if (timeout) {
+    if (timeout && timeout > 0) {
       timeoutId = setTimeout(() => {
         ch.removeListener(evt, listener);
         reject("timed out");
@@ -187,7 +189,7 @@ class BetterCrosis {
   // MISC
 
   close() {
-    client.close();
+    this._client.close();
   }
 }
 

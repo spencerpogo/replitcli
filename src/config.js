@@ -21,6 +21,7 @@ const _readAndParseConfig = async () => {
     throw new Error("Loaded JSON is not an object");
   }
   cache = { set: true, data };
+  return data;
 };
 
 const writeConfig = async (config) => {
@@ -71,4 +72,5 @@ module.exports = {
   _loadConfig,
   getConfig,
   update,
+  getConfigFile: () => configFile,
 };

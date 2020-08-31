@@ -1,3 +1,5 @@
+const chalk = require("chalk")
+
 let debugEnabled = false;
 
 module.exports.enableDebug = () => {
@@ -21,6 +23,9 @@ module.exports.debug = (...logs) => {
  * @param error The message to print
  */
 module.exports.fatal = (error) => {
-  process.stderr.write(error.toString() + "\n");
+  process.stderr.write(chalk.red(error.toString() + "\n"));
   process.exit(1);
 };
+
+module.exports.errorToString = (e) =>
+  e ? (typeof e.stack == "string" ? e.stack : "" + e) : "";

@@ -43,6 +43,7 @@ async function main(options) {
   }
   logs.debug("Writing key to config");
   config.update({ key: options.key });
+  console.log(`Wrote to config file: ${config.getConfigFile()}`);
 }
 
 module.exports = createCommand()
