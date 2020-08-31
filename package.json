@@ -25,5 +25,8 @@
   },
   "devDependencies": {
     "prettier": "^2.1.1"
+  },
+  "bin": {
+    "replit": "./index.js"
   }
 }
