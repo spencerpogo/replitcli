@@ -26,7 +26,7 @@ const performDataRequest = async (user, repl) => {
 If this is a private repl, please open
 https://repl.it/data/repls/@${user}/${repl}
 Copy the id value near the beginning (should look like {"id":"COPY THIS"})
-Re-run the command, replacing the repl name with --replid <id you copied>`;
+Re-run the command, replacing the repl name with id you copied`;
     } else {
       msg = `Error while getting repl ID of @${user}/${repl}: \n${logs.errorToString(
         e
