@@ -1,5 +1,7 @@
 # replitcli
 
+[![NPM](https://nodei.co/npm/replit.png)](https://nodei.co/npm/replit/)
+
 A command line interface for repl.it
 
 ## Current Commands
