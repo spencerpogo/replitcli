@@ -1,6 +1,5 @@
 const { createCommand } = require("commander");
 const open = require("open");
-const inquirer = require("inquirer");
 
 const { handledPrompt, isKey } = require("../utils");
 const logs = require("../logs");
