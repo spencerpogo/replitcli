@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const os = require("os");
 const path = require("path");
+const fs = require("fs");
 
 const { createCommand } = require("commander");
 
@@ -14,7 +15,23 @@ process.on("unhandledRejection", (err) => {
   throw err;
 });
 
-const defaultConfig = path.join(os.homedir(), ".replitcli.json");
+function isDir(path) {
+  try {
+    let result = fs.statSync(path);
+    return result.isDirectory();
+  } catch (e) {
+    if (e && e.code === "ENOENT") return false; // not found
+    throw e;
+  }
+}
+
+const configFilename = ".replitcli.json";
+const dotConfigPath = path.join(os.homedir(), ".config");
+
+// if the .config directory exists, use it, otherwise default to the user's home directory
+const defaultConfig = isDir(dotConfigPath)
+  ? path.join(dotConfigPath, configFilename)
+  : path.join(os.homedir(), configFilename);
 
 const program = createCommand();
 program
