@@ -3,14 +3,12 @@ const open = require("open");
 
 const logs = require("../logs");
 const config = require("../config");
-const { parseRepl } = require("../utils");
+const { getRepl } = require("../utils");
+const { getClient } = require("../connect");
 
 async function main(passedRepl) {
-  if (passedRepl) {
-    repl = parseRepl(passedRepl);
-  } else {
-    repl = config.getLocalRepl();
-  }
+  const replId = getRepl();
+  const conn = await getClient(replId);
 }
 
 module.exports = createCommand()

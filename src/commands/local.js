@@ -2,14 +2,10 @@ const { createCommand } = require("commander");
 
 const logs = require("../logs");
 const config = require("../config");
-const { parseRepl } = require("../utils");
+const { getRepl } = require("../utils");
 
 async function main(passedRepl) {
-  if (passedRepl) {
-    repl = parseRepl(passedRepl);
-  } else {
-    repl = config.getLocalRepl();
-  }
+  const replId = await getRepl();
 }
 
 module.exports = createCommand()

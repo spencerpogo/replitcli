@@ -1,6 +1,8 @@
 const inquirer = require("inquirer");
 
 const { performDataRequest } = require("./connect");
+const config = require("./config");
+const { findLocalDir } = require("./config");
 
 /**
  * @description A wrapper around inquirer.prompt which handles a TTY error by exiting
@@ -67,4 +69,8 @@ module.exports.parseRepl = async (repl) => {
     logs.fatal("Invalid data received from repl data request: missing repl id");
   }
   return id;
+};
+
+module.exports.getRepl = async (passedRepl) => {
+  return await module.exports.parseRepl(passedRepl || (await findLocalDir()));
 };

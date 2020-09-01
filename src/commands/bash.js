@@ -3,17 +3,18 @@ const { createCommand } = require("commander");
 const logs = require("../logs");
 const { listenForResize, raw } = require("../tty");
 const { getClient } = require("../connect");
-const { parseRepl } = require("../utils");
+const { getRepl } = require("../utils");
 
 const main = async (repl) => {
-  const client = await getClient(await parseRepl(repl));
+  const replId = await getRepl();
+  const client = await getClient(replId);
   const chan = client.channel("shell");
   // util functions
   const sendKey = (k) => chan.send({ input: k });
   const quit = () => {
     client.close();
     process.exit();
-  }
+  };
 
   // Listen for keys
   const { stdin } = process;
@@ -53,5 +54,5 @@ module.exports = createCommand()
   .name("bash")
   .storeOptionsAsProperties(false)
   .passCommandToAction(false)
-  .arguments("<repl>")
+  .arguments("[repl]")
   .action(main);
