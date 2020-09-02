@@ -1,6 +1,7 @@
 const tty = require("tty");
 
 const logs = require("./logs");
+const { EventEmitter } = require("events");
 
 const listenForResize = (cb) => {
   if (!process.stdout.isTTY) {
@@ -14,6 +15,42 @@ const listenForResize = (cb) => {
   onResize();
 };
 
+const listenToStdin = () => {
+  class KeyEmitter extends EventEmitter {}
+  const emitter = new KeyEmitter();
+
+  const { stdin } = process;
+  stdin.setRawMode(true);
+  stdin.resume();
+  stdin.setEncoding("utf8");
+
+  const specialKeys = {
+    "\x03": "^C",
+    "\x04": "^D",
+  };
+
+  let currentLine = "";
+  stdin.on("data", (key) => {
+    // ctrl-c ( end of text )
+    if (specialKeys[key]) {
+      emitter.emit(specialKeys[key]);
+      return;
+    }
+
+    // end of line
+    if (key == "\r") {
+      emitter.emit("line", currentLine);
+      currentLine = "";
+    } else {
+      currentLine += key;
+    }
+    emitter.emit("key", key);
+  });
+
+  return emitter;
+};
+
 module.exports = {
   listenForResize,
+  listenToStdin,
 };

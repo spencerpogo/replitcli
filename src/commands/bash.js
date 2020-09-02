@@ -1,7 +1,7 @@
 const { createCommand } = require("commander");
 
 const logs = require("../logs");
-const { listenForResize, raw } = require("../tty");
+const { listenForResize, listenToStdin } = require("../tty");
 const { getClient } = require("../connect");
 const { getRepl } = require("../utils");
 
@@ -10,37 +10,28 @@ const main = async (repl) => {
   const replId = await getRepl();
   const client = await getClient(replId);
   const chan = client.channel("shell");
-  // util functions
-  const sendKey = (k) => chan.send({ input: k });
+
   const quit = () => {
     client.close();
     process.exit();
   };
 
   // Listen for keys
-  const { stdin } = process;
-  stdin.setRawMode(true);
-  stdin.resume();
-  stdin.setEncoding("utf8");
-  // Pay attention to the currently typed command so if user types "exit", we quit
-  let prompt = "";
-  stdin.on("data", (key) => {
-    // ctrl-c ( end of text )
-    if (key === "\u0003") {
-      console.log("^C");
+  const keys = listenToStdin();
+
+  keys.on("^C", () => {
+    console.log("^C");
+    quit();
+  });
+
+  keys.on("line", (line) => {
+    if (line === "exit") {
+      console.log("");
       quit();
     }
-    if (key == "\r") {
-      if (prompt == "exit") {
-        console.log(""); // blank line
-        quit();
-      }
-      prompt = "";
-    } else {
-      prompt += key;
-    }
-    sendKey(key);
   });
+
+  keys.on("key", (k) => chan.send({ input: k }));
 
   listenForResize((rows, cols) => chan.send({ resizeTerm: { rows, cols } }));
   chan.on("command", (data) => {
