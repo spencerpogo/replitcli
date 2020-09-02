@@ -6,6 +6,7 @@ const { getClient } = require("../connect");
 const { getRepl } = require("../utils");
 
 const main = async (repl) => {
+  // TODO: -c that runs a single command and exits when it detects the prompt
   const replId = await getRepl();
   const client = await getClient(replId);
   const chan = client.channel("shell");
@@ -47,7 +48,6 @@ const main = async (repl) => {
       process.stdout.write(data.output);
     }
   });
-  Array.from("echo hello\r").forEach((c) => sendKey(c));
 };
 
 module.exports = createCommand()
