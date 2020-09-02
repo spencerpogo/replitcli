@@ -7,7 +7,7 @@ const { getRepl } = require("../utils");
 const { getClient } = require("../connect");
 
 async function main(passedRepl) {
-  const replId = getRepl();
+  const replId = getRepl(passedRepl);
   const conn = await getClient(replId);
 }
 

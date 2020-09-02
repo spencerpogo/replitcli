@@ -5,9 +5,9 @@ const { getClient } = require("../connect");
 const { getRepl } = require("../utils");
 const chalk = require("chalk");
 
-const main = async (repl) => {
+const main = async (passedRepl) => {
   // TODO: -c that runs a single command and exits when it detects the prompt
-  const replId = await getRepl();
+  const replId = await getRepl(passedRepl);
   const client = await getClient(replId);
   const chan = client.channel("shell");
 
