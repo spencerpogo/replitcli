@@ -3,12 +3,17 @@ const { createCommand } = require("commander");
 const { listenForResize, listenToStdin } = require("../tty");
 const { getClient } = require("../connect");
 const { getRepl } = require("../utils");
+const chalk = require("chalk");
 
 const main = async (repl) => {
   // TODO: -c that runs a single command and exits when it detects the prompt
   const replId = await getRepl();
   const client = await getClient(replId);
   const chan = client.channel("shell");
+
+  process.stdout.write(
+    chalk.gray("TIP: Press ^C or type 'exit' to quit at any time\n")
+  );
 
   const quit = () => {
     client.close();
