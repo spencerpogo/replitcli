@@ -61,8 +61,34 @@ const getConfig = async () => {
  * @param newValues the values to add to the configuration
  */
 const update = async (newValues) => {
-  const config = getConfig();
+  const config = await getConfig();
+  logs.debug("OLD:", config);
+  logs.debug("NEW:", { ...config, ...newValues });
   await writeConfig({ ...config, ...newValues });
+};
+
+const _findLocalDir = async () => {
+  const read = await getConfig();
+  const localDirs = read.localDirs || {};
+  // if the prop is empty, don't even bother
+  if (Object.keys(localDirs).length == 0) {
+    return null;
+  }
+  let cwd = process.cwd();
+  let lastCwd;
+  // when we traverse up to / or C:\ path.dirname will not change anything.
+  //  that is when we break out of the loop
+  logs.debug("Checking", cwd);
+  while (!localDirs[cwd] && cwd != lastCwd) {
+    lastCwd = cwd;
+    cwd = path.dirname(cwd);
+    console.log("Checking", cwd);
+  }
+  // If we still didn't find anything
+  if (!localDirs[cwd]) {
+    return null;
+  }
+  return localDirs[cwd];
 };
 
 /**
@@ -70,27 +96,14 @@ const update = async (newValues) => {
  *  or throw an error if it can't be found.
  */
 const findLocalDir = async () => {
-  const read = await getConfig();
-  const localDirs = read.local || {};
-  // if the prop is empty, don't even bother
-  if (Object.keys(localDirs).length !== 0) {
-    let cwd = process.cwd();
-    let lastCwd;
-    // when we traverse up to / or C:\ path.dirname will not change anything.
-    //  that is when we break out of the loop
-    while (!localDirs[cwd] && cwd != lastCwd) {
-      lastCwd = cwd;
-      cwd = path.dirname(cwd);
-    }
-  }
-  // If we still didn't find anything
-  if (!localDirs[cwd]) {
+  const res = await _findLocalDir();
+  if (res === null) {
     logs.fatal(
       "No repl provided and no saved repl stored in config.\n" +
         "Pass a repl as an argument or run 'replit local <repl>' to configure a repl for the directory."
     );
   }
-  return localDirs[cwd];
+  return res;
 };
 
 module.exports = {
