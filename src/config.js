@@ -73,7 +73,7 @@ const findLocalDir = async () => {
   const read = await getConfig();
   const localDirs = read.local || {};
   // if the prop is empty, don't even bother
-  if (Object.keys(obj).length !== 0) {
+  if (Object.keys(localDirs).length !== 0) {
     let cwd = process.cwd();
     let lastCwd;
     // when we traverse up to / or C:\ path.dirname will not change anything.
