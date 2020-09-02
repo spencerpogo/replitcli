@@ -3,6 +3,7 @@ const axios = require("axios");
 const logs = require("./logs");
 const BetterCrosis = require("./crosis");
 const { getConfig } = require("./config");
+const chalk = require("chalk");
 //const { isKey } = require("./utils");
 
 // TODO: Figure out best method to get ids for private repls
@@ -47,7 +48,7 @@ const getClient = async (replId) => {
     );
   }
 
-  console.log("Starting crosis connection...");
+  process.stdout.write(chalk.green("Starting crosis connection...\n"));
   const client = new BetterCrosis();
   try {
     await client.connect(replId, key);
