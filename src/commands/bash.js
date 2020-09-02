@@ -1,6 +1,5 @@
 const { createCommand } = require("commander");
 
-const logs = require("../logs");
 const { listenForResize, listenToStdin } = require("../tty");
 const { getClient } = require("../connect");
 const { getRepl } = require("../utils");
