@@ -62,8 +62,6 @@ const getConfig = async () => {
  */
 const update = async (newValues) => {
   const config = await getConfig();
-  logs.debug("OLD:", config);
-  logs.debug("NEW:", { ...config, ...newValues });
   await writeConfig({ ...config, ...newValues });
 };
 
@@ -78,11 +76,9 @@ const _findLocalDir = async () => {
   let lastCwd;
   // when we traverse up to / or C:\ path.dirname will not change anything.
   //  that is when we break out of the loop
-  logs.debug("Checking", cwd);
   while (!localDirs[cwd] && cwd != lastCwd) {
     lastCwd = cwd;
     cwd = path.dirname(cwd);
-    console.log("Checking", cwd);
   }
   // If we still didn't find anything
   if (!localDirs[cwd]) {
