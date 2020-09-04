@@ -2,8 +2,6 @@ const crosis = require("@replit/crosis");
 const axios = require("axios");
 global.WebSocket = require("ws");
 
-const config = require("./config");
-
 /* Listens for event evt on ch
 Promise is resolved when an event is received
 falsey or <=0 timeout is the same as no timeout
@@ -11,7 +9,7 @@ If timeout expires without an event being received, listener is removed and prom
 */
 const waitForEventTimeout = (ch, evt, timeout) => {
   return new Promise((resolve, reject) => {
-    const listener = (data) => {
+    const listener = () => {
       clearTimeout(timeoutId);
       resolve();
     };
@@ -146,7 +144,7 @@ class BetterCrosis {
   // INTERP2
 
   run(timeout = null) {
-    const ch = this.channel("interp2");
+    const ch = this.channel("shellrun2");
     ch.send({ runMain: {} });
     return waitForEventTimeout(ch, "command", timeout);
   }
