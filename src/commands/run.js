@@ -6,7 +6,7 @@ const { getRepl } = require("../utils");
 const { getClient } = require("../connect");
 
 async function main(passedRepl) {
-  const replId = getRepl(passedRepl);
+  const replId = await getRepl(passedRepl);
   const conn = await getClient(replId);
   // TODO: some way to determine whether to use interp2/run2
   const chan = conn.channel("shellrun2");
