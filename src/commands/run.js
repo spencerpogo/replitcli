@@ -22,6 +22,6 @@ async function main(passedRepl) {
 module.exports = createCommand()
   .storeOptionsAsProperties(false)
   .passCommandToAction(false)
-  .name("auth")
+  .name("run")
   .arguments("[repl]")
   .action(main);
