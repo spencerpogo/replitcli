@@ -14,7 +14,8 @@ async function main(passedRepl) {
   await conn.run();
   chan.on("command", (data) => {
     if (data.output) {
-      process.stdout.write(data.output);
+      const out = data.output.replace(//gm, ">");
+      process.stdout.write(out);
     }
   });
 }
