@@ -43,6 +43,8 @@ const main = async (passedRepl) => {
       process.stdout.write(data.output);
     }
   });
+
+  client._client.on("close", () => process.exit(1));
 };
 
 module.exports = createCommand()
