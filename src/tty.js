@@ -20,7 +20,9 @@ const listenToStdin = () => {
   const emitter = new KeyEmitter();
 
   const { stdin } = process;
-  stdin.setRawMode(true);
+  if (stdin.isTTY) {
+    stdin.setRawMode(true);
+  }
   stdin.resume();
   stdin.setEncoding("utf8");
 
@@ -30,21 +32,27 @@ const listenToStdin = () => {
   };
 
   let currentLine = "";
-  stdin.on("data", (key) => {
-    // ctrl-c ( end of text )
-    if (specialKeys[key]) {
-      emitter.emit(specialKeys[key]);
-      return;
-    }
+  stdin.on("data", (data) => {
+    if (!data) return;
+    data
+      .toString()
+      .split("")
+      .forEach((key) => {
+        // ctrl-c ( end of text )
+        if (specialKeys[key]) {
+          emitter.emit(specialKeys[key]);
+          return;
+        }
 
-    // end of line
-    if (key == "\r") {
-      emitter.emit("line", currentLine);
-      currentLine = "";
-    } else {
-      currentLine += key;
-    }
-    emitter.emit("key", key);
+        // end of line
+        if (key == "\r") {
+          emitter.emit("line", currentLine);
+          currentLine = "";
+        } else {
+          currentLine += key;
+        }
+        emitter.emit("key", key);
+      });
   });
 
   return emitter;
