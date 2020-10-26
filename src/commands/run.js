@@ -1,5 +1,4 @@
 const { createCommand } = require("commander");
-const open = require("open");
 
 const logs = require("../logs");
 const { getRepl } = require("../utils");

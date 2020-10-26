@@ -1,7 +1,6 @@
 const { createCommand } = require("commander");
 const chalk = require("chalk");
 
-const logs = require("../logs");
 const config = require("../config");
 const { parseRepl } = require("../utils");
 
