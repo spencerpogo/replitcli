@@ -66,7 +66,6 @@ async function main(passedSrc, passedDest, passedRepl) {
       logs.debug(`Reading local file ${JSON.stringify(src.path)}...`);
       // TODO: Stat and recursive copy
       const srcBuffer = await fs.readFile(src.path);
-      console.log(srcBuffer);
       const cleanDest = cleanReplPath(dest.path);
       logs.debug(`Writing remote file ${JSON.stringify(cleanDest)}...`);
       await conn.channel("files").request({
