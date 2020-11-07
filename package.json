@@ -16,7 +16,7 @@
   "dependencies": {
     "@replit/crosis": "^5.1.1",
     "@replit/protocol": "^0.2.9",
-    "axios": "^0.20.0",
+    "axios": "^0.21.0",
     "chalk": "^4.1.0",
     "commander": "^6.1.0",
     "inquirer": "^7.3.3",
