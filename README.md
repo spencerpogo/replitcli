@@ -32,7 +32,6 @@ Commands:
 ## Future Plans
 
 - exec command
-- Persisting tokens in config file and reconnecting with them to speed up connections
 - Recursive copy from remote
 - Repl info command
 
