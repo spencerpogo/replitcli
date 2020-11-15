@@ -126,8 +126,10 @@ async function main(passedSrc, passedDest, passedRepl) {
   } catch (e) {
     console.error(e);
   } finally {
+    logStatus("Persisting file snapshot...");
+    await conn.channel("snapshot").request({ fsSnapshot: {} });
     try {
-      client.close();
+      conn.close();
     } catch (e) {}
     // For some reason, process hangs if we don't include this.
     process.exit(0);
