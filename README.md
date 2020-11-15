@@ -29,6 +29,13 @@ Commands:
                            indicate it is on the repl.
 ```
 
+## Future Plans
+
+- exec command
+- Persisting tokens in config file and reconnecting with them to speed up connections
+- Recursive copy from remote
+- Repl info command
+
 ## License
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FScoder12%2Freplitcli.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FScoder12%2Freplitcli?ref=badge_large)
