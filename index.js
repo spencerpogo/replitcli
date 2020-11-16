@@ -26,12 +26,13 @@ function tryStat(path) {
   }
 }
 
+const HOME = os.homedir();
 // possible config directories, highest precedence first
 const configDirectories = [
   process.env.REPLIT_CONFIG_DIR,
   process.env.XDG_CONFIG_HOME,
-  path.join(os.homedir, ".config"),
-  os.homedir(),
+  path.join(HOME, ".config"),
+  HOME,
 ];
 
 const getConfigDir = () => {
