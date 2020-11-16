@@ -37,6 +37,74 @@ function cleanReplPath(p) {
     .replace(/\/$/g, ""); // Strip trailing "/"
 }
 
+const performCP = (src, dest) => {
+  if (src.isRepl && dest.isRepl) {
+    // Use cp to copy in-repl.
+    logStatus("Executing cp in repl...");
+    const chan = conn.channel("exec");
+    await chan.request({ exec: { args: ["cp", src.path, dest.path] } });
+  } else if (!src.isRepl && dest.isRepl) {
+    let toCopy = [{ srcPath: src.path, destPath: dest.path }];
+    let isTopLevel = true;
+
+    while (toCopy.length) {
+      const { srcPath, destPath } = toCopy.shift();
+      // Stat the provided source to determine whether it is a file or directory.
+      const stat = await fs.stat(srcPath);
+      // If its a directory, push all of its files into the queue
+      if (stat.isDirectory()) {
+        const files = await fs.readdir(srcPath);
+        // Repl.it uses linux, so use path.posix to join
+        // Push the files into the queue.
+        toCopy = toCopy.concat(
+          files.map((f) => ({
+            srcPath: path.join(srcPath, f),
+            destPath: path.posix.join(destPath, f),
+          }))
+        );
+      } else if (!stat.isFile) {
+        // Only warn if the user-provided file is not copyable. If we found it while
+        //  traversing recursively, silently ignore
+        if (isTopLevel) {
+          logs.fatal(
+            "Cannot copy a path that is neither a file nor directory"
+          );
+        }
+        logs.debug(
+          `Ignoring non-directory non-file ${JSON.stringify(srcPath)}`
+        );
+      } else {
+        // Read a local file and copy it into the repl.
+        logStatus(`Reading local file ${JSON.stringify(srcPath)}...`);
+        const srcBuffer = await fs.readFile(srcPath);
+        const cleanDest = cleanReplPath(destPath);
+        logStatus(`Writing remote file ${JSON.stringify(cleanDest)}...`);
+        await conn.channel("files").request({
+          write: {
+            path: cleanDest,
+            content: srcBuffer.toString("base64"),
+          },
+        });
+      }
+      isTopLevel = false;
+    }
+  } else if (src.isRepl && !dest.isRepl) {
+    // Read from the repl
+    logStatus(`Reading remote file ${JSON.stringify(src.path)}...`);
+    const { file } = await conn.channel("files").request({
+      read: { path: cleanReplPath(src.path) },
+    });
+    logStatus(
+      `Writing ${file.content.length} bytes to local file ${JSON.stringify(
+        dest.path
+      )}...`
+    );
+    await fs.writeFile(dest.path, file.content);
+  } else {
+    logs.fatal("Unknown configuration");
+  }
+}
+
 async function main(passedSrc, passedDest, passedRepl) {
   // Parse src / dest
   const src = parsePathArg(passedSrc);
@@ -58,71 +126,7 @@ async function main(passedSrc, passedDest, passedRepl) {
   const logStatus = (line) => process.stderr.write(line + "\n");
 
   try {
-    if (src.isRepl && dest.isRepl) {
-      // Use cp to copy in-repl.
-      logStatus("Executing cp in repl...");
-      const chan = conn.channel("exec");
-      await chan.request({ exec: { args: ["cp", src.path, dest.path] } });
-    } else if (!src.isRepl && dest.isRepl) {
-      let toCopy = [{ srcPath: src.path, destPath: dest.path }];
-      let isTopLevel = true;
-
-      while (toCopy.length) {
-        const { srcPath, destPath } = toCopy.shift();
-        // Stat the provided source to determine whether it is a file or directory.
-        const stat = await fs.stat(srcPath);
-        // If its a directory, push all of its files into the queue
-        if (stat.isDirectory()) {
-          const files = await fs.readdir(srcPath);
-          // Repl.it uses linux, so use path.posix to join
-          // Push the files into the queue.
-          toCopy = toCopy.concat(
-            files.map((f) => ({
-              srcPath: path.join(srcPath, f),
-              destPath: path.posix.join(destPath, f),
-            }))
-          );
-        } else if (!stat.isFile) {
-          // Only warn if the user-provided file is not copyable. If we found it while
-          //  traversing recursively, silently ignore
-          if (isTopLevel) {
-            logs.fatal(
-              "Cannot copy a path that is neither a file nor directory"
-            );
-          }
-          logs.debug(
-            `Ignoring non-directory non-file ${JSON.stringify(srcPath)}`
-          );
-        } else {
-          // Read a local file and copy it into the repl.
-          logStatus(`Reading local file ${JSON.stringify(srcPath)}...`);
-          const srcBuffer = await fs.readFile(srcPath);
-          const cleanDest = cleanReplPath(destPath);
-          logStatus(`Writing remote file ${JSON.stringify(cleanDest)}...`);
-          await conn.channel("files").request({
-            write: {
-              path: cleanDest,
-              content: srcBuffer.toString("base64"),
-            },
-          });
-        }
-        isTopLevel = false;
-      }
-    } else if (src.isRepl && !dest.isRepl) {
-      // Read from the repl
-      logStatus(`Reading remote file ${JSON.stringify(src.path)}...`);
-      const { file } = await conn.channel("files").request({
-        read: { path: cleanReplPath(src.path) },
-      });
-      logStatus(
-        `Writing ${file.content.length} bytes to local file ${JSON.stringify(
-          dest.path
-        )}...`
-      );
-      await fs.writeFile(dest.path, file.content);
-    } else {
-      logs.fatal("Unknown configuration");
-    }
+    performCP(src, dest);
   } catch (e) {
     console.error(e);
   } finally {
