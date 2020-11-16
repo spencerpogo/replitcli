@@ -105,15 +105,20 @@ const performCP = async (conn, src, dest) => {
   }
 };
 
-async function main(passedSrc, passedDest, { repl }) {
+async function main(passedSources, { repl }) {
+  if (passedSources.length < 2) {
+    logs.fatal("Need at least one source and one destination");
+  }
+
   // Parse src / dest
-  const src = parsePathArg(passedSrc);
+  const passedDest = passedSources.pop();
+  const sources = passedSources.map((src) => parsePathArg(src));
   const dest = parsePathArg(passedDest);
 
   // Check for error *before* connecting
-  if (!src.isRepl && !dest.isRepl) {
+  if (!sources.some((src) => src.isRepl) && !dest.isRepl) {
     logs.fatal(
-      "You specified two local paths. " +
+      "You specified all local paths. " +
         "Use " +
         chalk.green("repl:") +
         " before a path to indicate it is on the repl. "
@@ -124,7 +129,18 @@ async function main(passedSrc, passedDest, { repl }) {
   const conn = await getClient(replId);
 
   try {
-    await performCP(conn, src, dest);
+    // If theres only one source, its a direct copy
+    if (sources.length == 1) {
+      await performCP(conn, src, dest);
+    } else {
+      // Otherwise, dest should be a directory as multiple files will be written into it
+      for (const src of sources) {
+        await performCP(conn, src, {
+          ...dest,
+          path: path.posix.join(dest.path, src.path),
+        });
+      }
+    }
   } catch (e) {
     console.error(e);
   } finally {
@@ -152,5 +168,5 @@ module.exports = createCommand()
       " to indicate it is on the repl."
   )
   .option("--repl <repl>", "The repl to copy to")
-  .arguments("<src> <dest>")
+  .arguments("[files...]")
   .action(main);
