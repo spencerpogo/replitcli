@@ -10,6 +10,8 @@ const chalk = require("chalk");
 
 const PREFIX = "repl:";
 
+const logStatus = (line) => process.stderr.write(line + "\n");
+
 function parsePathArg(arg) {
   if (arg.startsWith(PREFIX)) {
     return {
@@ -37,7 +39,7 @@ function cleanReplPath(p) {
     .replace(/\/$/g, ""); // Strip trailing "/"
 }
 
-const performCP = (src, dest) => {
+const performCP = async (conn, src, dest) => {
   if (src.isRepl && dest.isRepl) {
     // Use cp to copy in-repl.
     logStatus("Executing cp in repl...");
@@ -66,9 +68,7 @@ const performCP = (src, dest) => {
         // Only warn if the user-provided file is not copyable. If we found it while
         //  traversing recursively, silently ignore
         if (isTopLevel) {
-          logs.fatal(
-            "Cannot copy a path that is neither a file nor directory"
-          );
+          logs.fatal("Cannot copy a path that is neither a file nor directory");
         }
         logs.debug(
           `Ignoring non-directory non-file ${JSON.stringify(srcPath)}`
@@ -103,9 +103,9 @@ const performCP = (src, dest) => {
   } else {
     logs.fatal("Unknown configuration");
   }
-}
+};
 
-async function main(passedSrc, passedDest, passedRepl) {
+async function main(passedSrc, passedDest, { repl }) {
   // Parse src / dest
   const src = parsePathArg(passedSrc);
   const dest = parsePathArg(passedDest);
@@ -120,18 +120,17 @@ async function main(passedSrc, passedDest, passedRepl) {
     );
   }
 
-  const replId = await getRepl(passedRepl);
+  const replId = await getRepl(repl);
   const conn = await getClient(replId);
 
-  const logStatus = (line) => process.stderr.write(line + "\n");
-
   try {
-    performCP(src, dest);
+    await performCP(conn, src, dest);
   } catch (e) {
     console.error(e);
   } finally {
     logStatus("Persisting file snapshot...");
     await conn.channel("snapshot").request({ fsSnapshot: {} });
+    logStatus("Disconnecting...");
     try {
       conn.close();
     } catch (e) {}
@@ -150,5 +149,6 @@ module.exports = createCommand()
       chalk.green("repl:") +
       " to indicate it is on the repl."
   )
-  .arguments("<src> <dest> [repl]")
+  .option("--repl <repl>", "The repl to copy to")
+  .arguments("<src> <dest>")
   .action(main);
