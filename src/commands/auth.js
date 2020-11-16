@@ -49,6 +49,7 @@ module.exports = createCommand()
   .storeOptionsAsProperties(false)
   .passCommandToAction(false)
   .name("auth")
+  .description("Authenticate with the CLI")
   .option(
     "-k, --key <key>",
     "Use a specified key instead of prompting on the command line " +
