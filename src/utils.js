@@ -1,8 +1,8 @@
 const inquirer = require("inquirer");
 
 const { performDataRequest } = require("./connect");
-const config = require("./config");
 const { findLocalDir } = require("./config");
+const logs = require("./logs");
 
 /**
  * @description A wrapper around inquirer.prompt which handles a TTY error by exiting
@@ -35,10 +35,13 @@ module.exports.isKey = (key) => {
 module.exports.isReplId = (replId) => replId && replId.split("-").length == 5;
 
 const badRepl = () =>
-  logs.fatal(`That doesn't look like a valid repl.
-Please use the repl URL or the form @user/replname
-or a repl ID (a 5 part, - joined UUID as returned by 
-https://repl.it/data/repls/@user/repl)`);
+  logs.fatal(
+    "That doesn't look like a valid repl.\n" +
+      "Please use the repl URL or the form @user/replname " +
+      "or a repl ID (a 5 part, " +
+      "'-' joined UUID as returned by " +
+      "https://repl.it/data/repls/@user/repl)"
+  );
 
 /**
  * @description Parse a user provided repl id
