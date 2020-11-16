@@ -22,5 +22,6 @@ module.exports = createCommand()
   .storeOptionsAsProperties(false)
   .passCommandToAction(false)
   .name("local")
+  .description("Set the local repl for the current directory")
   .arguments("<repl>")
   .action(main);
