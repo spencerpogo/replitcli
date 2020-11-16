@@ -7,7 +7,7 @@ const { parseRepl } = require("../utils");
 async function main(passedRepl, { dir }) {
   const replId = await parseRepl(passedRepl);
 
-  let { localDirs } = config.getConfig();
+  let { localDirs } = await config.getConfig();
   localDirs = { ...localDirs, [dir]: replId };
   config.update({ localDirs });
 
