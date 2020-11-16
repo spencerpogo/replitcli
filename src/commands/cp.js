@@ -128,8 +128,10 @@ async function main(passedSrc, passedDest, { repl }) {
   } catch (e) {
     console.error(e);
   } finally {
-    logStatus("Persisting file snapshot...");
-    await conn.channel("snapshot").request({ fsSnapshot: {} });
+    if (dest.isRepl) {
+      logStatus("Persisting file snapshot...");
+      await conn.channel("snapshot").request({ fsSnapshot: {} });
+    }
     logStatus("Disconnecting...");
     try {
       conn.close();
