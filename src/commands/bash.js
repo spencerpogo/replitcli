@@ -51,5 +51,6 @@ module.exports = createCommand()
   .name("bash")
   .storeOptionsAsProperties(false)
   .passCommandToAction(false)
+  .description("Open a bash shell in the repl")
   .arguments("[repl]")
   .action(main);
