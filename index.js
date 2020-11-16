@@ -7,8 +7,9 @@ const { createCommand } = require("commander");
 
 const { version } = require("./package");
 const addCommands = require("./src/commands");
-const { enableDebug, debug } = require("./src/logs");
+const { enableDebug } = require("./src/logs");
 const { setConfigFile } = require("./src/config");
+const { setShowConnecting } = require("./src/connect");
 
 // fail fast, avoid warnings
 process.on("unhandledRejection", (err) => {
@@ -44,6 +45,7 @@ program
     "Location of configuration file",
     defaultConfig
   )
+  .option("-q, --quiet", "Don't show 'Crosis connecting' message")
   .action(() => program.help()); // show help and exit if no subcommand provided
 
 program.on("option:debug", () => {
@@ -60,6 +62,8 @@ setConfigFile(defaultConfig);
 program.on("option:config", () => {
   setConfigFile(program.opts().config);
 });
+
+program.on("option:quiet", () => setShowConnecting(false));
 
 addCommands(program);
 

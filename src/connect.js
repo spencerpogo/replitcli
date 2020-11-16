@@ -4,14 +4,12 @@ const logs = require("./logs");
 const BetterCrosis = require("./crosis");
 const { getConfig } = require("./config");
 const chalk = require("chalk");
-//const { isKey } = require("./utils");
 
-// TODO: Figure out best method to get ids for private repls
-// Options, best to worst:
-// - Ask the team to make a method where given a crosis key you can access private repl ids
-// - Tell them to paste some js in their console or visit a URL
-// - Get user's login creds (probably not a good idea)
-// - Ask the team to make a basic oauth route specifically for the CLI: open a web server on localhost, redirect to a route, get premission, redirect back (probably impractical)
+let showConnecting = true;
+
+const setShowConnecting = (val) => {
+  showConnecting = val;
+};
 
 const performDataRequest = async (user, repl) => {
   logs.debug(`Performing data request for ID of @${user}/${repl}`);
@@ -48,7 +46,9 @@ const getClient = async (replId) => {
     );
   }
 
-  process.stdout.write(chalk.green("Starting crosis connection...\n"));
+  if (showConnecting) {
+    process.stdout.write(chalk.green("Starting crosis connection...\n"));
+  }
   const client = new BetterCrosis();
   try {
     await client.connect(replId, key);
@@ -62,4 +62,5 @@ const getClient = async (replId) => {
 module.exports = {
   performDataRequest,
   getClient,
+  setShowConnecting,
 };
