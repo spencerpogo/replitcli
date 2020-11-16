@@ -36,7 +36,7 @@ const configDirectories = [
 const getConfigDir = () => {
   for (const dir of configDirectories) {
     // Only check directory, because file might not exist yet
-    const stat = tryStat(dir);
+    const stat = dir && tryStat(dir);
     if (stat && stat.isDirectory()) {
       return dir;
     }
