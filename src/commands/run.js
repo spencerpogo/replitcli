@@ -23,5 +23,6 @@ module.exports = createCommand()
   .storeOptionsAsProperties(false)
   .passCommandToAction(false)
   .name("run")
+  .description("Runs the repl.")
   .arguments("[repl]")
   .action(main);
