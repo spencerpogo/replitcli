@@ -48,9 +48,9 @@ const main = async (passedRepl) => {
 };
 
 module.exports = createCommand()
-  .name("bash")
   .storeOptionsAsProperties(false)
   .passCommandToAction(false)
+  .name("bash")
   .description("Open a bash shell in the repl")
   .arguments("[repl]")
   .action(main);
