@@ -7,8 +7,8 @@ const { createCommand } = require("commander");
 
 const { version } = require("./package");
 const addCommands = require("./src/commands");
-const { enableDebug } = require("./src/logs");
-const { setConfigFile } = require("./src/config");
+const { enableDebug, fatal } = require("./src/logs");
+const { setConfigFile, getConfigFile } = require("./src/config");
 const { setShowConnecting } = require("./src/connect");
 
 // fail fast, avoid warnings
@@ -16,26 +16,42 @@ process.on("unhandledRejection", (err) => {
   throw err;
 });
 
-function isDir(path) {
+function tryStat(path) {
   try {
     let result = fs.statSync(path);
-    return result.isDirectory();
+    return result;
   } catch (e) {
-    if (e && e.code === "ENOENT") return false; // not found
+    if (e && e.code === "ENOENT") return null; // not found
     throw e;
   }
 }
 
+// possible config directories, highest precedence first
+const configDirectories = [
+  process.env.REPLIT_CONFIG_DIR,
+  process.env.XDG_CONFIG_HOME,
+  os.homedir(),
+];
+
+const getConfigDir = () => {
+  for (const dir of configDirectories) {
+    // Only check directory, because file might not exist yet
+    const stat = tryStat(dir);
+    if (stat && stat.isDirectory()) {
+      return dir;
+    }
+  }
+  fatal(
+    "Can't find a valid config directory. Set REPLIT_CONFIG_DIR environment " +
+      "variable to specify a valid directory to store config file in."
+  );
+};
+
 const configFilename = ".replitcli.json";
-const dotConfigPath = path.join(os.homedir(), ".config");
 
-// if the .config directory exists, use it, otherwise default to the user's home directory
-const defaultConfig = isDir(dotConfigPath)
-  ? path.join(dotConfigPath, configFilename)
-  : path.join(os.homedir(), configFilename);
+const defaultConfig = path.join(getConfigDir(), configFilename);
 
-const program = createCommand();
-program
+const program = createCommand()
   .storeOptionsAsProperties(false)
   .passCommandToAction(false)
   .version(version || "0.1.0")
