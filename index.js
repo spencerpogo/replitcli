@@ -30,6 +30,7 @@ function tryStat(path) {
 const configDirectories = [
   process.env.REPLIT_CONFIG_DIR,
   process.env.XDG_CONFIG_HOME,
+  path.join(os.homedir, ".config"),
   os.homedir(),
 ];
 
