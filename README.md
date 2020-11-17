@@ -15,14 +15,15 @@ Options:
   -V, --version                            output the version number
   --debug                                  Enable debug logging
   -c, --config <filename>                  Location of configuration file (default: "~/.config/.replitcli.json")
+  -q, --quiet                              Don't show 'Crosis connecting' message
   -h, --help                               display help for command
 
 Commands:
   auth [options]                           Authenticate with the CLI
   bash [repl]                              Open a bash shell in the repl
   local [options] <repl>                   Set the local repl for the a directory
-  run [repl]                               Runs the repl.
-  cp <src> <dest> [repl]                   Copies a file from a repl to your computer or vice versa. Prepend a path with repl: to indicate it is on the repl.
+  run [options] [repl]                     Runs, stops, or restarts the repl.
+  cp [options] [files...]                  Copies a file from a repl to your computer or vice versa. Prepend a path with repl: to indicate it is on the repl.
   exec [options] <program> [arguments...]  Execute a command in the repl and wait for it to finish
 ```
 
