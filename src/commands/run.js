@@ -21,7 +21,7 @@ async function main(passedRepl, { stop, restart }) {
 
   chan.on("command", (data) => {
     if (data.output) {
-      const out = data.output.replace(//gm, ">");
+      const out = data.output.replace(//gm, "❯");
       process.stdout.write(out);
     }
   });
