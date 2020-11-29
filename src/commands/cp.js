@@ -131,7 +131,7 @@ async function main(passedSources, { repl }) {
   try {
     // If theres only one source, its a direct copy
     if (sources.length == 1) {
-      await performCP(conn, src, dest);
+      await performCP(conn, sources[0], dest);
     } else {
       // Otherwise, dest should be a directory as multiple files will be written into it
       for (const src of sources) {
