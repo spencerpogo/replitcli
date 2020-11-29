@@ -94,6 +94,9 @@ const performCP = async (conn, src, dest) => {
     const { file } = await conn.channel("files").request({
       read: { path: cleanReplPath(src.path) },
     });
+    if (!file) {
+      logs.fatal(`Remote file ${JSON.stringify(src.path)} doesn't exist`);
+    }
     logStatus(
       `Writing ${file.content.length} bytes to local file ${JSON.stringify(
         dest.path
