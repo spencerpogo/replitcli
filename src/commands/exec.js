@@ -1,9 +1,10 @@
 const { createCommand } = require("commander");
 const { getRepl } = require("../utils");
 const { getClient } = require("../connect");
+const logs = require("../logs");
 const dotenv = require("dotenv");
 
-const main = async (program, args, { repl, env }) => {
+const main = async (program, args, { repl, env, snapshot }) => {
   const replId = await getRepl(repl);
   const conn = await getClient(replId);
 
@@ -15,6 +16,9 @@ const main = async (program, args, { repl, env }) => {
   });
   await chan.request({ exec: { args: [program, ...args], env } });
 
+  if (snapshot) {
+    await conn.snapshot();
+  }
   // Required cleanup code
   try {
     conn.close();
@@ -41,6 +45,10 @@ module.exports = createCommand()
       "with any existing environment, and take precedence.",
     envParser,
     {}
+  )
+  .option(
+    "--snapshot",
+    "Takes a files snapshot after running the command to preserve written files"
   )
   .arguments("<program> [arguments...]")
   .action(main);

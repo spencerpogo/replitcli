@@ -149,7 +149,7 @@ async function main(passedSources, { repl }) {
   } finally {
     if (dest.isRepl) {
       logStatus("Persisting file snapshot...");
-      await conn.channel("snapshot").request({ fsSnapshot: {} });
+      await conn.snapshot();
     }
     logStatus("Disconnecting...");
     try {

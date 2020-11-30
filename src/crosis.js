@@ -184,6 +184,12 @@ class BetterCrosis {
     });
   }
 
+  // SNAPSHOT
+
+  async snapshot() {
+    await this.channel("snapshot").request({ fsSnapshot: {} });
+  }
+
   // MISC
 
   close() {
