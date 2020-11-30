@@ -1,7 +1,9 @@
 const fs = require("fs").promises;
+const { createReadStream } = require("fs");
 const path = require("path");
 
 const { createCommand } = require("commander");
+const getStream = require("get-stream");
 
 const logs = require("../logs");
 const { getRepl } = require("../utils");
@@ -54,7 +56,14 @@ const performCP = async (conn, src, dest, logStatus) => {
     while (toCopy.length) {
       const { srcPath, destPath } = toCopy.shift();
       // Stat the provided source to determine whether it is a file or directory.
-      const stat = await fs.stat(srcPath);
+      // If it is -, make a fake stat result that acts as a file
+      const stat =
+        srcPath === "-"
+          ? {
+              isDirectory: () => false,
+              isFile: () => true,
+            }
+          : await fs.stat(srcPath);
       // If its a directory, push all of its files into the queue
       if (stat.isDirectory()) {
         const files = await fs.readdir(srcPath);
@@ -77,10 +86,20 @@ const performCP = async (conn, src, dest, logStatus) => {
         );
       } else {
         // Read a local file and copy it into the repl.
-        logStatus(`Reading local file ${JSON.stringify(srcPath)}...`);
-        const srcBuffer = await fs.readFile(srcPath);
+        logStatus(
+          `Reading ${
+            srcPath === "-" ? "stdin" : "local file " + JSON.stringify(srcPath)
+          }...`
+        );
+        const srcBuffer = await getStream.buffer(
+          srcPath === "-" ? process.stdin : createReadStream(srcPath)
+        );
         const cleanDest = cleanReplPath(destPath);
-        logStatus(`Writing remote file ${JSON.stringify(cleanDest)}...`);
+        logStatus(
+          `Writing ${srcBuffer.length} bytes to remote file ${JSON.stringify(
+            cleanDest
+          )}...`
+        );
         await conn.channel("files").request({
           write: {
             path: cleanDest,
