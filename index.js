@@ -63,7 +63,7 @@ const program = createCommand()
     "Location of configuration file",
     defaultConfig
   )
-  .option("-q, --quiet", "Don't show 'Crosis connecting' message")
+  .option("-hc, --hide-connecting", "Don't show 'Crosis connecting' message")
   .action(() => program.help()); // show help and exit if no subcommand provided
 
 program.on("option:debug", () => {
