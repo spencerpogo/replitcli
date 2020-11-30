@@ -81,7 +81,7 @@ program.on("option:config", () => {
   setConfigFile(program.opts().config);
 });
 
-program.on("option:quiet", () => setShowConnecting(false));
+program.on("option:hide-connecting", () => setShowConnecting(false));
 
 addCommands(program);
 
