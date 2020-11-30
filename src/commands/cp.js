@@ -7,6 +7,7 @@ const logs = require("../logs");
 const { getRepl } = require("../utils");
 const { getClient } = require("../connect");
 const chalk = require("chalk");
+const { fstat } = require("fs");
 
 const PREFIX = "repl:";
 
@@ -99,11 +100,15 @@ const performCP = async (conn, src, dest, logStatus) => {
       logs.fatal(`Remote file ${JSON.stringify(src.path)} doesn't exist`);
     }
     logStatus(
-      `Writing ${file.content.length} bytes to local file ${JSON.stringify(
-        dest.path
-      )}...`
+      `Writing ${file.content.length} bytes to ${
+        dest.path === "-" ? "stdout" : "local path " + JSON.stringify(dest.path)
+      }...`
     );
-    await fs.writeFile(dest.path, file.content);
+    if (dest.path === "-") {
+      process.stdout.write(file.content);
+    } else {
+      await fs.writeFile(dest.path, file.content);
+    }
   } else {
     logs.fatal("Unknown configuration");
   }
