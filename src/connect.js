@@ -47,7 +47,7 @@ const getClient = async (replId) => {
   }
 
   if (showConnecting) {
-    process.stdout.write(chalk.green("Starting crosis connection...\n"));
+    process.stderr.write(chalk.green("Starting crosis connection...\n"));
   }
   const client = new BetterCrosis();
   try {
