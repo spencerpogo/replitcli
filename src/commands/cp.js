@@ -10,7 +10,8 @@ const chalk = require("chalk");
 
 const PREFIX = "repl:";
 
-const logStatus = (line) => process.stderr.write(line + "\n");
+const realLogStatus = (line) => process.stderr.write(line + "\n");
+const noOp = () => {};
 
 function parsePathArg(arg) {
   if (arg.startsWith(PREFIX)) {
@@ -39,7 +40,7 @@ function cleanReplPath(p) {
     .replace(/\/$/g, ""); // Strip trailing "/"
 }
 
-const performCP = async (conn, src, dest) => {
+const performCP = async (conn, src, dest, logStatus) => {
   if (src.isRepl && dest.isRepl) {
     // Use cp to copy in-repl.
     logStatus("Executing cp in repl...");
@@ -108,7 +109,7 @@ const performCP = async (conn, src, dest) => {
   }
 };
 
-async function main(passedSources, { repl }) {
+async function main(passedSources, { repl, quiet }) {
   if (passedSources.length < 2) {
     logs.fatal("Need at least one source and one destination");
   }
@@ -131,17 +132,24 @@ async function main(passedSources, { repl }) {
   const replId = await getRepl(repl);
   const conn = await getClient(replId);
 
+  const logStatus = quiet ? noOp : realLogStatus;
+
   try {
     // If theres only one source, its a direct copy
     if (sources.length == 1) {
-      await performCP(conn, sources[0], dest);
+      await performCP(conn, sources[0], dest, logStatus);
     } else {
       // Otherwise, dest should be a directory as multiple files will be written into it
       for (const src of sources) {
-        await performCP(conn, src, {
-          ...dest,
-          path: path.posix.join(dest.path, src.path),
-        });
+        await performCP(
+          conn,
+          src,
+          {
+            ...dest,
+            path: path.posix.join(dest.path, src.path),
+          },
+          logStatus
+        );
       }
     }
   } catch (e) {
@@ -171,5 +179,6 @@ module.exports = createCommand()
       " to indicate it is on the repl."
   )
   .option("--repl <repl>", "The repl to copy to")
+  .option("-q, --quiet", "Don't print status messages to stderr")
   .arguments("[files...]")
   .action(main);
