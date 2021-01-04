@@ -9,7 +9,7 @@ const main = async (passedRepl) => {
   // TODO: -c that runs a single command and exits when it detects the prompt
   const replId = await getRepl(passedRepl);
   const client = await getClient(replId);
-  const chan = client.channel("shell");
+  const chan = await client.channel("shell");
 
   process.stdout.write(
     chalk.gray("TIP: Press ^C or type 'exit' to quit at any time\n")
@@ -38,7 +38,7 @@ const main = async (passedRepl) => {
   keys.on("key", (k) => chan.send({ input: k }));
 
   listenForResize((rows, cols) => chan.send({ resizeTerm: { rows, cols } }));
-  chan.on("command", (data) => {
+  chan.onCommand((data) => {
     if (data.output) {
       process.stdout.write(data.output);
     }
