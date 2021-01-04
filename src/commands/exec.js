@@ -8,8 +8,8 @@ const main = async (program, args, { repl, env, snapshot }) => {
   const replId = await getRepl(repl);
   const conn = await getClient(replId);
 
-  const chan = conn.channel("exec");
-  chan.on("command", (data) => {
+  const chan = await conn.channel("exec");
+  chan.onCommand((data) => {
     if (data && data.output) {
       process.stdout.write(data.output);
     }
