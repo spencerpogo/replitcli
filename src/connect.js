@@ -49,7 +49,13 @@ const getClient = async (replId) => {
   if (showConnecting) {
     process.stderr.write(chalk.green("Starting crosis connection...\n"));
   }
+
   const client = new BetterCrosis();
+  client._client.setUnrecoverableErrorHandler((err) => {
+    console.error(err);
+    logs.fatal("Unrecoverable crosis error occurred, exiting.");
+  });
+
   try {
     await client.connect(replId, key);
   } catch (e) {
