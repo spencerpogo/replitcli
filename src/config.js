@@ -66,7 +66,11 @@ const update = async (newValues) => {
   await writeConfig({ ...config, ...newValues });
 };
 
-const _findLocalDir = async () => {
+/**
+ * @description find a directory in config.localDirs that is a parent of process.cwd()
+ *  or throw an error if it can't be found.
+ */
+const findLocalDir = async () => {
   const read = await getConfig();
   const localDirs = read.localDirs || {};
   // if the prop is empty, don't even bother
@@ -86,21 +90,6 @@ const _findLocalDir = async () => {
     return null;
   }
   return localDirs[cwd];
-};
-
-/**
- * @description find a directory in config.localDirs that is a parent of process.cwd()
- *  or throw an error if it can't be found.
- */
-const findLocalDir = async () => {
-  const res = await _findLocalDir();
-  if (res === null) {
-    logs.fatal(
-      "No repl provided and no saved repl stored in config.\n" +
-        "Pass a repl as an argument or run 'replit local <repl>' to configure a repl for the directory."
-    );
-  }
-  return res;
 };
 
 module.exports = {

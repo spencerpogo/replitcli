@@ -75,5 +75,15 @@ module.exports.parseRepl = async (repl) => {
 };
 
 module.exports.getRepl = async (passedRepl) => {
-  return await module.exports.parseRepl(passedRepl || (await findLocalDir()));
+  let repl = passedRepl;
+  if (!repl) {
+    repl = await findLocalDir();
+    if (repl === null) {
+      logs.fatal(
+        "No repl provided and no saved repl stored in config.\n" +
+          "Pass a repl as an argument or run 'replit local <repl>' to configure a repl for the directory."
+      );
+    }
+  }
+  return await module.exports.parseRepl(repl);
 };
