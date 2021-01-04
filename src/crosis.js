@@ -68,7 +68,9 @@ class BetterCrosis {
           context: {
             repl: { id: replId },
           },
-          fetchToken: async () => this._token,
+          fetchToken: async () => ({
+            token: this._token,
+          }),
         },
         () => {
           this.connected = true;
