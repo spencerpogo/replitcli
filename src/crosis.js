@@ -38,10 +38,6 @@ class BetterCrosis {
     this.connected = false;
   }
 
-  async _connect(token) {
-    await this._client.connect({ token });
-  }
-
   async _getToken(replId, apiKey) {
     const res = await axios.post(
       `https://repl.it/api/v0/repls/${replId}/token`,
@@ -58,14 +54,28 @@ class BetterCrosis {
     this._token = await this._getToken(replId, apiKey);
 
     // as of 2.1.0
-    await this._connect(this._token);
+    //await this._client.connect({ token });
 
     // as of 6.0.0-beta.0
     /*await this._client.connect({
-      fetchToken: async () => this._token
-    })*/
+      fetchToken: async () => this._token,
+    });*/
 
-    this.connected = true;
+    // as of 6.0.4
+    await new Promise((res) =>
+      this._client.open(
+        {
+          context: {
+            repl: { id: replId },
+          },
+          fetchToken: async () => this._token,
+        },
+        () => {
+          this.connected = true;
+          res();
+        }
+      )
+    );
   }
 
   channel(name) {
