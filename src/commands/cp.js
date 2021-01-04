@@ -47,7 +47,7 @@ const performCP = async (conn, src, dest, logStatus) => {
   if (src.isRepl && dest.isRepl) {
     // Use cp to copy in-repl.
     logStatus("Executing cp in repl...");
-    const chan = conn.channel("exec");
+    const chan = await conn.channel("exec");
     await chan.request({ exec: { args: ["cp", src.path, dest.path] } });
   } else if (!src.isRepl && dest.isRepl) {
     let toCopy = [{ srcPath: src.path, destPath: dest.path }];
@@ -100,7 +100,8 @@ const performCP = async (conn, src, dest, logStatus) => {
             cleanDest
           )}...`
         );
-        await conn.channel("files").request({
+        const filesChan = await conn.channel("files");
+        await filesChan.request({
           write: {
             path: cleanDest,
             content: srcBuffer.toString("base64"),
@@ -112,7 +113,8 @@ const performCP = async (conn, src, dest, logStatus) => {
   } else if (src.isRepl && !dest.isRepl) {
     // Read from the repl
     logStatus(`Reading remote file ${JSON.stringify(src.path)}...`);
-    const { file } = await conn.channel("files").request({
+    const filesChan = await conn.channel("files");
+    const { file } = await filesChan.request({
       read: { path: cleanReplPath(src.path) },
     });
     if (!file) {
