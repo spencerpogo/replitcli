@@ -80,11 +80,16 @@ class BetterCrosis {
     );
   }
 
-  channel(name) {
+  async channel(name) {
     if (this._channels.has(name)) {
       return this._channels.get(name);
     } else {
-      const chan = this._client.openChannel({ service: name });
+      const chan = await new Promise((res) =>
+        this._client.openChannel(
+          { service: name },
+          ({ channel }) => channel && res(channel)
+        )
+      );
       this._channels.set(name, chan);
       return chan;
     }
