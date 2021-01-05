@@ -7,7 +7,7 @@ Promise is resolved when an event is received
 falsey or <=0 timeout is the same as no timeout
 If timeout expires without an event being received, listener is removed and promise is rejected
 */
-const waitForEventTimeout = (ch, evt, timeout) => {
+const waitForCommandTimeout = (ch, timeout) => {
   return new Promise((resolve, reject) => {
     const listener = () => {
       clearTimeout(timeoutId);
@@ -17,7 +17,10 @@ const waitForEventTimeout = (ch, evt, timeout) => {
     let timeoutId;
     if (timeout && timeout > 0) {
       timeoutId = setTimeout(() => {
-        ch.removeListener(evt, listener);
+        // Remove listener
+        ch.onCommandListeners = ch.onCommandListeners.filter(
+          (i) => i !== listener
+        );
         reject("timed out");
       }, timeout);
     } else {
@@ -98,7 +101,8 @@ class BetterCrosis {
   // FILES
 
   async read(path) {
-    let res = await this.channel("files").request({
+    const filesChan = await this.channel("files");
+    let res = await filesChan.request({
       read: {
         path: path,
       },
@@ -114,7 +118,8 @@ class BetterCrosis {
     if (encode) {
       contents = Buffer.from(contents).toString("base64");
     }
-    return await this.channel("files").request({
+    const chan = this.channel("files");
+    return await chan.request({
       write: {
         path: path,
         content: contents,
@@ -123,8 +128,9 @@ class BetterCrosis {
   }
 
   async listdir(dir) {
+    const chan = await this.channel("files");
     return (
-      await this.channel("files").request({
+      await chan.request({
         readdir: {
           path: dir,
         },
@@ -160,16 +166,16 @@ class BetterCrosis {
 
   // INTERP2
 
-  run(timeout = null) {
-    const ch = this.channel("shellrun2");
+  async run(timeout = null) {
+    const ch = await this.channel("shellrun2");
     ch.send({ runMain: {} });
-    return waitForEventTimeout(ch, "command", timeout);
+    return await waitForEventTimeout(ch, "command", timeout);
   }
 
-  stop(timeout = null) {
-    const ch = this.channel("interp2");
+  async stop(timeout = null) {
+    const ch = await this.channel("interp2");
     ch.send({ clear: {} });
-    return waitForEventTimeout(ch, "command", timeout);
+    return await waitForEventTimeout(ch, "command", timeout);
   }
 
   // PACKAGER
