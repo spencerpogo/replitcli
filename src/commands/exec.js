@@ -1,6 +1,7 @@
 const { createCommand } = require("commander");
 const { getRepl } = require("../utils");
 const { getClient } = require("../connect");
+const utils = require("../utils");
 const logs = require("../logs");
 const dotenv = require("dotenv");
 
@@ -19,11 +20,7 @@ const main = async (program, args, { repl, env, snapshot }) => {
   if (snapshot) {
     await conn.snapshot();
   }
-  // Required cleanup code
-  try {
-    conn.close();
-  } catch (e) {}
-  process.exit(0);
+  utils.cleanup();
 };
 
 // Parses value as a key=val environment variable, and returns the object environment

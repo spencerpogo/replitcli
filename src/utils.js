@@ -87,3 +87,12 @@ module.exports.getRepl = async (passedRepl) => {
   }
   return await module.exports.parseRepl(repl);
 };
+
+module.exports.exit = (code) => process.exit(code);
+
+module.exports.cleanup = (conn) => {
+  try {
+    conn.close();
+  } catch (e) {}
+  module.exports.exit(0);
+};

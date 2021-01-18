@@ -6,10 +6,9 @@ const { createCommand } = require("commander");
 const getStream = require("get-stream");
 
 const logs = require("../logs");
-const { getRepl } = require("../utils");
+const utils = require("../utils");
 const { getClient } = require("../connect");
 const chalk = require("chalk");
-const { fstat } = require("fs");
 
 const PREFIX = "repl:";
 
@@ -155,7 +154,7 @@ async function main(passedSources, { repl, quiet }) {
     );
   }
 
-  const replId = await getRepl(repl);
+  const replId = await utils.getRepl(repl);
   const conn = await getClient(replId);
 
   const logStatus = quiet ? noOp : realLogStatus;
@@ -186,11 +185,7 @@ async function main(passedSources, { repl, quiet }) {
       await conn.snapshot();
     }
     logStatus("Disconnecting...");
-    try {
-      conn.close();
-    } catch (e) {}
-    // For some reason, process hangs if we don't include this.
-    process.exit(0);
+    utils.cleanup();
   }
 }
 

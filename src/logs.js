@@ -1,4 +1,5 @@
-const chalk = require("chalk")
+const chalk = require("chalk");
+const utils = require("./utils");
 
 let debugEnabled = false;
 
@@ -24,7 +25,7 @@ module.exports.debug = (...logs) => {
  */
 module.exports.fatal = (error) => {
   process.stderr.write(chalk.red(error.toString() + "\n"));
-  process.exit(1);
+  utils.exit(1);
 };
 
 module.exports.errorToString = (e) =>

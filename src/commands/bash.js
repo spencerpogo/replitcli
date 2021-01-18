@@ -2,7 +2,7 @@ const { createCommand } = require("commander");
 
 const { listenForResize, listenToStdin } = require("../tty");
 const { getClient } = require("../connect");
-const { getRepl } = require("../utils");
+const utils = require("../utils");
 const chalk = require("chalk");
 
 const main = async (passedRepl) => {
@@ -16,8 +16,9 @@ const main = async (passedRepl) => {
   );
 
   const quit = () => {
-    client.close();
-    process.exit();
+    keys.removeAllListeners();
+    process.stdin.pause();
+    utils.cleanup();
   };
 
   // Listen for keys
@@ -44,7 +45,7 @@ const main = async (passedRepl) => {
     }
   });
 
-  client._client.on("close", () => process.exit(1));
+  client._client.on("close", () => quit());
 };
 
 module.exports = createCommand()
