@@ -19,7 +19,7 @@ async function main(passedRepl, { stop, restart }) {
   // TODO: some way to determine whether to use interp2/run2
   const chan = await conn.channel("shellrun2");
 
-  chan.on("command", (data) => {
+  chan.onCommand((data) => {
     if (data.output) {
       const out = data.output.replace(//gm, "❯");
       process.stdout.write(out);

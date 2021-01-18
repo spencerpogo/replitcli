@@ -7,7 +7,7 @@ const chalk = require("chalk");
 
 const main = async (passedRepl) => {
   // TODO: -c that runs a single command and exits when it detects the prompt
-  const replId = await getRepl(passedRepl);
+  const replId = await utils.getRepl(passedRepl);
   const client = await getClient(replId);
   const chan = await client.channel("shell");
 
@@ -44,8 +44,6 @@ const main = async (passedRepl) => {
       process.stdout.write(data.output);
     }
   });
-
-  client._client.on("close", () => quit());
 };
 
 module.exports = createCommand()

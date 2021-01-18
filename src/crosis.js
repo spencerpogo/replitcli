@@ -26,7 +26,7 @@ const waitForCommandTimeout = (ch, timeout) => {
     } else {
       timeoutId = null;
     }
-    ch.once(evt, listener);
+    ch.onCommand(listener);
   });
 };
 
@@ -169,13 +169,13 @@ class BetterCrosis {
   async run(timeout = null) {
     const ch = await this.channel("shellrun2");
     ch.send({ runMain: {} });
-    return await waitForEventTimeout(ch, "command", timeout);
+    return await waitForCommandTimeout(ch, timeout);
   }
 
   async stop(timeout = null) {
     const ch = await this.channel("interp2");
     ch.send({ clear: {} });
-    return await waitForEventTimeout(ch, "command", timeout);
+    return await waitForCommandTimeout(ch, timeout);
   }
 
   // PACKAGER
