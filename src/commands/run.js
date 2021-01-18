@@ -51,7 +51,6 @@ async function main(passedRepl, { stop, restart }) {
 
 module.exports = createCommand()
   .storeOptionsAsProperties(false)
-  .passCommandToAction(false)
   .name("run")
   .description("Runs, stops, or restarts the repl.")
   .option("--stop", "Stops the repl")

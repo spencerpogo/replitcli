@@ -47,7 +47,6 @@ async function main(options) {
 
 module.exports = createCommand()
   .storeOptionsAsProperties(false)
-  .passCommandToAction(false)
   .name("auth")
   .description("Authenticate with the CLI")
   .option(

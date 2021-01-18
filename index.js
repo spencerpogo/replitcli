@@ -55,7 +55,6 @@ const defaultConfig = path.join(getConfigDir(), configFilename);
 
 const program = createCommand()
   .storeOptionsAsProperties(false)
-  .passCommandToAction(false)
   .version(version || "0.1.0")
   .option("--debug", "Enable debug logging")
   .option(

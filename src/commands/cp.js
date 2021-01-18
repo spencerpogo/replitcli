@@ -191,7 +191,6 @@ async function main(passedSources, { repl, quiet }) {
 
 module.exports = createCommand()
   .storeOptionsAsProperties(false)
-  .passCommandToAction(false)
   .name("cp")
   .description(
     "Copies a file from a repl to your computer or vice versa. " +

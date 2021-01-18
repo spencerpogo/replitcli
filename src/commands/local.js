@@ -43,7 +43,6 @@ https://${repl}.id.repl.co/`);
 
 module.exports = createCommand()
   .storeOptionsAsProperties(false)
-  .passCommandToAction(false)
   .name("local")
   .description("Set the local repl for the a directory")
   .option(

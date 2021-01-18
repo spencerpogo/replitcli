@@ -32,7 +32,6 @@ const envParser = (value, environment) => {
 
 module.exports = createCommand()
   .storeOptionsAsProperties(false)
-  .passCommandToAction(false)
   .name("exec")
   .description("Execute a command in the repl and wait for it to finish")
   .option("-r, --repl <repl>", "The repl to connect to")
