@@ -77,4 +77,5 @@ module.exports = createCommand()
   .name("bulk")
   .description("Run multiple commands without re-opening the connection")
   .arguments("<args...>")
+  .allowUnknownOption()
   .action(main);
