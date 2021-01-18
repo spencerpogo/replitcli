@@ -35,8 +35,8 @@ async function main() {
   let cmdIndex = -1;
   const clients = new Map();
 
-  const realGetClient = connect.getClient;
-  connect.getClient = async (replId) => {
+  const realGetClient = connect._getClient;
+  connect._getClient = async (replId) => {
     if (clients.has(replId)) {
       return clients.get(replId);
     }

@@ -35,7 +35,12 @@ Re-run the command, replacing the repl name with id you copied`;
   }
 };
 
-const getClient = async (replId) => {
+module.exports = {
+  performDataRequest,
+  setShowConnecting,
+};
+
+module.exports._getClient = async (replId) => {
   const { key } = await getConfig();
   // no clue why but this doesn't work if I require it at the top of the file
   // very weird :shrug:
@@ -65,8 +70,4 @@ const getClient = async (replId) => {
   return client;
 };
 
-module.exports = {
-  performDataRequest,
-  getClient,
-  setShowConnecting,
-};
+module.exports.getClient = (replId) => module.exports._getClient(replId);
