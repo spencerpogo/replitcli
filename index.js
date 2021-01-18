@@ -65,6 +65,8 @@ const program = createCommand()
   .option("-hc, --hide-connecting", "Don't show 'Crosis connecting' message")
   .action(() => program.help()); // show help and exit if no subcommand provided
 
+module.exports.program = program;
+
 program.on("option:debug", () => {
   const debugOption = program.opts().debug;
   if (debugOption) {
@@ -88,4 +90,6 @@ async function main() {
   await program.parseAsync(process.argv);
 }
 
-main();
+if (require.main === module) {
+  main();
+}
