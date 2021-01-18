@@ -210,7 +210,8 @@ class BetterCrosis {
   // SNAPSHOT
 
   async snapshot() {
-    await this.channel("snapshot").request({ fsSnapshot: {} });
+    const chan = await this.channel("snapshot");
+    await chan.request({ fsSnapshot: {} });
   }
 
   // MISC
