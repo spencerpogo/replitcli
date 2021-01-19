@@ -38,7 +38,7 @@ async function main(passedRepl, { stop, restart }) {
       };
 
       const res = () => {
-        ch.onCommandListeners = ch.onCommandListeners.filter(
+        chan.onCommandListeners = chan.onCommandListeners.filter(
           (i) => i !== onCommand
         );
         resolve();
