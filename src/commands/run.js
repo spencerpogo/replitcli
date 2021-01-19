@@ -17,7 +17,7 @@ async function main(passedRepl, { stop, restart }) {
   const conn = await getClient(replId);
 
   // TODO: some way to determine whether to use interp2/run2
-  const chan = await conn.channel("shellrun2");
+  const chan = await conn.channel("shellrun");
 
   chan.onCommand((data) => {
     if (data.output) {
