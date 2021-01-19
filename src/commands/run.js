@@ -30,17 +30,21 @@ async function main(passedRepl, { stop, restart }) {
     logs.debug("Stopping...");
     chan.send({ clear: {} });
     await new Promise((resolve) => {
-      const res = () => {
-        chan.off("command", onCommand);
-        resolve();
-      };
-
-      chan.onCommand((data) => {
+      const onCommand = (data) => {
         if (data && data.state === 0) {
           logs.debug("Resolving");
           res();
         }
-      });
+      };
+
+      const res = () => {
+        ch.onCommandListeners = ch.onCommandListeners.filter(
+          (i) => i !== onCommand
+        );
+        resolve();
+      };
+
+      chan.onCommand(onCommand);
     });
   }
   if (shouldRun) {
