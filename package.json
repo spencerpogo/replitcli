@@ -22,7 +22,7 @@
     "dotenv": "^8.2.0",
     "get-stream": "^6.0.0",
     "inquirer": "^7.3.3",
-    "open": "^7.2.1",
+    "open": "^8.0.7",
     "ws": "^7.3.1"
   },
   "devDependencies": {
