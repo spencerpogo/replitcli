@@ -14,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@replit/crosis": "^6.0.4",
+    "@replit/crosis": "^9.0.4",
     "@replit/protocol": "^0.2.9",
     "axios": "^0.21.0",
     "chalk": "^4.1.0",
